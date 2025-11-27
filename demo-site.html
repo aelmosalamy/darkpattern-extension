@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Dark Pattern Demo Site</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f5f7;
+            color: #222;
+        }
+
+        header {
+            background: linear-gradient(135deg, #4b6cb7, #182848);
+            color: #fff;
+            padding: 16px 24px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        main {
+            padding: 16px 24px 80px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            border-radius: 4px;
+            border: none;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #1890ff;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #222;
+        }
+
+        .flex {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .text-small {
+            font-size: 12px;
+        }
+
+        .danger {
+            color: #cf1322;
+        }
+
+        /* Disguised ad card */
+        .feed {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f0f0f0;
+        }
+
+        .card img {
+            display: block;
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .sponsored-label {
+            font-size: 9px;
+            /* intentionally tiny */
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: #888;
+        }
+
+        .card-link {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #1890ff;
+            text-decoration: none;
+        }
+
+        /* Fake urgency countdown */
+        .countdown-box {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: #fff7e6;
+            border: 1px solid #ffd591;
+        }
+
+        .countdown-timer {
+            font-family: "SF Mono", "Roboto Mono", monospace;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .countdown-label {
+            font-size: 13px;
+        }
+
+        /* Full-screen overlay for obscured interface */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay-content {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px 24px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .overlay-title {
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .overlay-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .overlay-disclaimer {
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Footer fixed bar */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #e8e8e8;
+            padding: 8px 16px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 900;
+        }
+
+        footer label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>SuperSaver Plus – Dark Pattern Playground</h1>
+        <p class="text-small">A deliberately sketchy page to test your dark pattern detector.</p>
+    </header>
+
+    <!-- Obscured interface: full-screen overlay with forced action -->
+    <div class="overlay" id="welcome-overlay">
+        <div class="overlay-content">
+            <h2 class="overlay-title">Before you go further…</h2>
+            <p>
+                Join <strong>SuperSaver Plus</strong> to unlock exclusive offers. If you close this,
+                you’ll <span class="danger">really want to miss these savings</span> and might
+                <span class="danger">regret</span> it later.
+            </p>
+
+            <!-- Confirm-shaming buttons -->
+            <div class="overlay-actions">
+                <button id="accept-deal" class="btn-primary">
+                    Yes, give me massive savings
+                </button>
+                <button id="decline-deal" class="btn-secondary">
+                    No thanks, I prefer to pay full price
+                </button>
+            </div>
+
+            <p class="overlay-disclaimer">
+                Closing this popup means you might miss out on future promotions.
+            </p>
+        </div>
+    </div>
+
+    <main>
+        <!-- Fake urgency / countdown -->
+        <section>
+            <h2>🔥 Limited time offer</h2>
+            <p>
+                This <strong>today only</strong> deal ends soon – hurry up or you’ll miss out!
+            </p>
+            <div class="countdown-box">
+                <span class="countdown-label">
+                    Deal ends in:
+                </span>
+                <span class="countdown-timer" id="countdown-timer">
+                    00:15:32
+                </span>
+            </div>
+            <p class="text-small">
+                Only a few left. This limited time sale ends in just a few minutes – act now!
+            </p>
+        </section>
+
+        <!-- Pre-selected opt-in checkboxes -->
+        <section>
+            <h2>Sign up for an account</h2>
+            <form>
+                <div class="flex">
+                    <label>
+                        Email:
+                        <input type="email" placeholder="you@example.com" required />
+                    </label>
+                </div>
+
+                <div style="margin-top: 12px;">
+                    <label>
+                        Password:
+                        <input type="password" placeholder="••••••••" required />
+                    </label>
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <!-- Dark pattern: pre-checked marketing consent -->
+                    <label>
+                        <input type="checkbox" checked />
+                        Yes, sign me up to receive
+                        <strong>marketing emails, product updates, and sale alerts</strong>
+                        from SuperSaver Plus and trusted partners, and allow sharing my data
+                        with third-party partners for personalized ads.
+                    </label>
+                </div>
+
+                <div style="margin-top: 8px;">
+                    <!-- Another pre-checked consent -->
+                    <label>
+                        <input type="checkbox" checked />
+                        Keep me informed about promotions, exclusive offers, and
+                        newsletters via email and push notifications.
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 16px;">
+                    Create account
+                </button>
+            </form>
+        </section>
+
+        <!-- Trick question / confusing opt-out text -->
+        <section>
+            <h2>Communication preferences</h2>
+            <p class="text-small">
+                These settings control how often we send you marketing emails, offers, and ads.
+            </p>
+
+            <div style="margin-top: 8px;">
+                <label>
+                    <input type="checkbox" />
+                    Check if you don't want to stop receiving promotional emails.
+                    (Uncheck if you do not want us to not send fewer marketing emails.)
+                </label>
+            </div>
+
+            <div style="margin-top: 8px;">
+                <label>
+                    <input type="checkbox" />
+                    Uncheck if you don't want to opt out of our newsletter.
+                </label>
+            </div>
+
+            <div style="margin-top: 8px;">
+                <label>
+                    <input type="checkbox" />
+                    Do not uncheck this box if you don't want to receive marketing emails.
+                </label>
+            </div>
+        </section>
+
+        <!-- Disguised ad / sponsored content -->
+        <section>
+            <h2>Your personalized feed</h2>
+            <div class="feed">
+                <article class="card">
+                    <img src="https://via.placeholder.com/400x200.png?text=Article+1" alt="Article 1" />
+                    <div class="card-body">
+                        <div class="card-title">How to save money on groceries</div>
+                        <div class="text-small">
+                            Simple tips to reduce your grocery bill this month.
+                        </div>
+                        <a href="#" class="card-link">Read more</a>
+                    </div>
+                </article>
+
+                <!-- Disguised ad card -->
+                <article class="card">
+                    <img src="https://via.placeholder.com/400x200.png?text=Sponsored+Deal" alt="Sponsored ad" />
+                    <div class="card-body">
+                        <!-- Tiny sponsored label -->
+                        <div class="sponsored-label">Sponsored</div>
+                        <div class="card-title">SuperSaver Platinum Credit Card</div>
+                        <div class="text-small">
+                            Earn up to 30% cash back on select partner offers. Hidden fees may apply.
+                        </div>
+                        <a href="#" class="card-link">
+                            Learn more (promoted)
+                        </a>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="https://via.placeholder.com/400x200.png?text=Article+2" alt="Article 2" />
+                    <div class="card-body">
+                        <div class="card-title">Top 10 budgeting apps</div>
+                        <div class="text-small">
+                            A quick comparison of the most popular budgeting apps this year.
+                        </div>
+                        <a href="#" class="card-link">Read more</a>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer with mildly sneaky checkbox -->
+    <footer>
+        <div>
+            <strong>Cookie & tracking consent</strong>
+        </div>
+        <div>
+            <label>
+                <input type="checkbox" checked />
+                I agree to personalized ads and marketing tracking (recommended).
+            </label>
+        </div>
+    </footer>
+
+    <script>
+        // Fake countdown timer that just decrements a MM:SS style time every second.
+        (function () {
+            const el = document.getElementById("countdown-timer");
+            if (!el) return;
+
+            let totalSeconds = 15 * 60 + 32; // 15:32
+
+            function formatTime(s) {
+                const m = Math.floor(s / 60);
+                const sec = s % 60;
+                const mm = String(m).padStart(2, "0");
+                const ss = String(sec).padStart(2, "0");
+                return "00:" + mm + ":" + ss;
+            }
+
+            function tick() {
+                if (totalSeconds <= 0) {
+                    el.textContent = "00:00:00";
+                    return;
+                }
+                el.textContent = formatTime(totalSeconds);
+                totalSeconds--;
+                setTimeout(tick, 1000);
+            }
+
+            tick();
+        })();
+
+        // Overlay accept/decline behavior (the dark pattern is the copy, not the logic)
+        (function () {
+            const overlay = document.getElementById("welcome-overlay");
+            const acceptBtn = document.getElementById("accept-deal");
+            const declineBtn = document.getElementById("decline-deal");
+
+            function closeOverlay() {
+                overlay.style.display = "none";
+            }
+
+            if (acceptBtn) acceptBtn.addEventListener("click", closeOverlay);
+            if (declineBtn) declineBtn.addEventListener("click", closeOverlay);
+        })();
+    </script>
+</body>
+
+</html>

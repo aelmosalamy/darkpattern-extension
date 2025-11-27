@@ -1,0 +1,19 @@
+{
+    "name": "darkpattern-extension",
+    "description": "An extension that detects dark patterns in real-time.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup/popup.html"
+    },
+    "content_scripts": [
+        {
+            "js": [
+                "scripts/content.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}
